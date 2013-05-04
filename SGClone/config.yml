@@ -1,0 +1,37 @@
+server:
+  min-players: 2
+
+chat:
+  format: '&c%points&7|&r%prefix%username&7: &f%message'
+  prefix:
+    user: '&2'
+    vip: '&1'
+    staff: '&4'
+
+messages:
+  player-death:  '%prefix%username &ehas been &ckilled!' 
+  player-join: '&c%points&7|&r%prefix%username &ehas joined the game!'
+  player-quit: '&c%points&7|&r%prefix%username &ehas left the game!'
+  killer: '&eYou have been awarder &a10 points &efor killing &r%prefix%username'
+  victim: '&eYou lost &c50 points &efor being killed by &r%prefix%username'
+
+motd:
+  lobby: '[MCSG] &3US&f1: &2Lobby'
+  pregame: '[MCSG] &3US&f1: &2Pre-Game'
+  ingame: '[MCSG] &3US&f1: &2LiveGame'
+  deathmatch: '[MCSG] &3US&f1: &2DeathMatch'
+  endgame: '[MCSG] &3US&f1: &2EndGame'
+
+timers:
+  lobby: 120
+  pregame: 30
+  ingame: 1800
+  deathmatch: 180
+
+block-break-whitelist:
+  - 18
+  - 39
+  - 40
+  - 103
+  - 106
+  - 111

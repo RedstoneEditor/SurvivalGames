@@ -1,0 +1,54 @@
+name: SurvivalGames
+version: 1.1.1
+main: sg.main.SurvivalGames
+description: MCSG's plugin completely rebuilt!
+authors: [Renaud, AssassinsMod, Rage_Master14]
+website: http://www.redstoneeditorsg.tk/
+database: false
+prefix: SG
+commands:
+  help:
+    description: Shows the help page
+    aliases: [h, sghelp, sgh]
+    permission: sg.help
+    permission-message: You don't have enough permissions!
+    usage: /<command> <Page#>
+  vote:
+    description: Votes for a map
+    aliases: [v, sgvote, sgv]
+    permission: sg.vote
+    permission-message: you don't have enough permissions!
+    usage: /<command> <Map>
+  skip:
+    description: Skip's the current map selection
+    aliases: [s, sgskip, sgs]
+    permission: sg.vote
+    permission-message: you don't have enough permissions!
+    usage: /<command> 
+  ghostfix:
+    description: Teleports a player to themself
+    aliases: [gf, sgghostfix, sggf]
+    permission: sg.vote
+    permission-message: you don't have enough permissions!
+    usage: /<command> 
+permissions:
+  sg.*:
+    description: Gives access to all commands
+    default: op
+    children:
+      sg.help: true
+  sg.user:
+    description: Gives access to user commands
+    default: true
+    children:
+      sg.help: true
+      sg.vote: true
+  sg.help:
+    description: Gives user access to help command
+    default: true
+  sg.vote:
+    description: Gives user access to vote command
+    default: true
+  sg.ghostfix: 
+    description: Give user access to GhostFix command
+    default: true
