@@ -26,14 +26,14 @@ public class MapsManager {
 	/** Loads all the map configuration */
 	public void load() {
 		try { cfg = YamlConfiguration.loadConfiguration(cfgFile); }
-		catch (Exception ex) { plugin.logger.log("ERROR", ex.getMessage()); }
+		catch (Exception ex) { plugin.logger.log(ex); }
 		
-		plugin.logger.log("LOG", "Loading maps settings...");
+		plugin.logger.log("Loading maps settings...");
 		
 		this.count = cfg.getInt("maps.count");	
 		
 		for (int i = 0; i < count; i++) {
-			plugin.logger.log("LOG", "Loading map: " + cfg.getString(mname(i)));
+			plugin.logger.log("Loading map: " + cfg.getString(mname(i)));
 			
 			Map map = new Map(cfg.getString(mname(i)), plugin.getServer().getWorldContainer().getAbsolutePath() + cfg.getString(mpath(i).replace(".", "")), i);
 			try{
@@ -45,14 +45,14 @@ public class MapsManager {
 			}
 		}
 		
-		plugin.logger.log("LOG", "All maps loaded!");
+		plugin.logger.log("All maps loaded!");
 		System.out.println(cfg.getString("maps.map0.world"));
 	}
 	
 	/** Loads the spawnpoints for each map */
 	public void loadSpawnPoints() {
 		for (Map map : maps) {
-			plugin.logger.log("LOG", "Loading spawnpoints for map " + map.name + "!");
+			plugin.logger.log("Loading spawnpoints for map " + map.name + "!");
 			
 			Spawn[] spawns = new Spawn[24];
 			

@@ -21,10 +21,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerListener implements Listener {
 	private SurvivalGames plugin;
-
-	public PlayerListener(SurvivalGames instance) {
-		this.plugin = instance;
-	}
+	public PlayerListener(SurvivalGames instance) {	this.plugin = instance;	}
 
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent event) {

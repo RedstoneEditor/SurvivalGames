@@ -52,9 +52,9 @@ public class ConfigManager {
 	/** Loads data from config.yml */
 	public void load() {
 		try { cfg = YamlConfiguration.loadConfiguration(cfgFile); }
-		catch (Exception ex) { plugin.logger.log("ERROR", ex.getMessage()); }
+		catch (Exception ex) { plugin.logger.log(ex); }
 		
-		plugin.logger.log("LOG", "Loading values from config.yml...");
+		plugin.logger.log("Loading values from config.yml...");
 
 		this.chatFormat = cfg.getString("chat.format");
 		this.userPrefix = cfg.getString("chat.prefix.user");
@@ -82,12 +82,12 @@ public class ConfigManager {
 		
 		this.blockBreakWhitelist = cfg.getStringList("block-break-whitelist");
 		
-		plugin.logger.log("LOG", "Config values loaded!");
+		plugin.logger.log("Config values loaded!");
 	}
 
 	/** Checks if config files exists */
 	public void Check() {
-		plugin.logger.log("LOG", "Checking files!");
+		plugin.logger.log("Checking files!");
 		
 		File baseDir = new File("plugins" + File.separator + "SurvivalGames");
 		File config = new File("plugins" + File.separator + "SurvivalGames" + File.separator + "config.yml");
@@ -103,7 +103,7 @@ public class ConfigManager {
 	}
 	
 	private void Export(String inputFile, File dest) {
-		plugin.logger.log("LOG", "Exporting " + inputFile + "!");
+		plugin.logger.log("Exporting " + inputFile + "!");
 		
 		try {
 			dest.createNewFile();
@@ -119,8 +119,8 @@ public class ConfigManager {
 				output.write(buffer, 0, length);
 			}
 		} catch (Exception ex) {
-			plugin.logger.log("LOG", "Error while exporting " + inputFile + "!");
-			plugin.logger.log("ERROR", ex.getMessage());
+			plugin.logger.log("Error while exporting " + inputFile + "!");
+			plugin.logger.log(ex);
 		}
 	}
 }

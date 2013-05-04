@@ -56,7 +56,7 @@ public class SurvivalGames extends JavaPlugin {
 	public int gameTime;
 	public int deathmatchTime;
 
-	public int gameState = GameState.LOBBY;
+	public GameState gameState = GameState.LOBBY;
 	public String currentWorld;
 	public Vote cmdVote;
 	public Skip cmdSkip;

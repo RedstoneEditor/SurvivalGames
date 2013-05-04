@@ -25,7 +25,7 @@ public class Help {
 		int page = 1;
 		
 		try { page = Integer.getInteger(args[0]); }
-		catch(Exception ex) { plugin.logger.log("ERROR", ex.getMessage()); }
+		catch(Exception ex) { plugin.logger.log(ex); }
 				
 		if ((page!=1) && (page!=2)) { page = 1; }
 		

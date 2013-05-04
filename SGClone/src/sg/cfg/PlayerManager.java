@@ -23,7 +23,7 @@ public class PlayerManager {
 
 	public SGPlayer getPlayer(String user) {
 		try { cfg = YamlConfiguration.loadConfiguration(cfgFile); }
-		catch (Exception ex) { plugin.logger.log("ERROR", ex.getMessage()); }
+		catch (Exception ex) { plugin.logger.log(ex); }
 
 		String rank = cfg.getString(prank(user));
 		int points = cfg.getInt(ppoints(user));
@@ -37,7 +37,7 @@ public class PlayerManager {
 
 	public void updatePlayer(String user, int points, int kills, int deaths, int wins, int loses) {
 		try { cfg = YamlConfiguration.loadConfiguration(cfgFile); }
-		catch (Exception ex) { plugin.logger.log("ERROR", ex.getMessage()); }
+		catch (Exception ex) { plugin.logger.log(ex); }
 		
 		cfg.set(ppoints(user), cfg.getInt(ppoints(user)) + points);
 		cfg.set(pkills(user), cfg.getInt(pkills(user)) + kills);
@@ -46,15 +46,15 @@ public class PlayerManager {
 		cfg.set(ploses(user), cfg.getInt(ploses(user)) + loses);
 
 		try { cfg.save(cfgFile); }
-		catch (Exception ex) { plugin.logger.log("ERROR", ex.getMessage()); }
+		catch (Exception ex) { plugin.logger.log(ex); }
 	}
 
 	public void addPlayer(String user) { addPlayer(user, "USER"); }
 	public void addPlayer(String user, String rank) {
 		try { cfg = YamlConfiguration.loadConfiguration(cfgFile); }
-		catch (Exception ex) { plugin.logger.log("ERROR", ex.getMessage()); }
+		catch (Exception ex) { plugin.logger.log(ex); }
 
-		plugin.logger.log("LOG", "Creating " + user + "'s data...");
+		plugin.logger.log("Creating " + user + "'s data...");
 		
 		cfg.set(prank(user), rank);
 		cfg.set(ppoints(user), 100);
@@ -63,10 +63,10 @@ public class PlayerManager {
 		cfg.set(pwins(user), 0);
 		cfg.set(ploses(user), 0);
 		
-		plugin.logger.log("LOG", user + "'s data created!");
+		plugin.logger.log(user + "'s data created!");
 
 		try { cfg.save(cfgFile); } 
-		catch (Exception ex) { plugin.logger.log("ERROR", ex.getMessage()); }
+		catch (Exception ex) { plugin.logger.log(ex); }
 	}
 
 	public boolean isNew(String user) {

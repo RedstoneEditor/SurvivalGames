@@ -55,10 +55,9 @@ public class ChatUtils {
 	}
 
 	public void Shout(String message) {
-		for(Player player : Bukkit.getOnlinePlayers()){
-			player.sendMessage(message);
-		}
-	}
+		Bukkit.broadcastMessage(message); }
+	public void Shout(String message, String permission) {
+		Bukkit.broadcast(message, permission); }
 
 	public String ApplyFormat(String user, String format) { return ApplyFormat(user, "", format); }
 	public String ApplyFormat(String user, String message, String format) {
@@ -82,11 +81,9 @@ public class ChatUtils {
 	}
 
 	/**
-	 * 
-	 * @param src
-	 *            String to split
-	 * @param len
-	 *            Length to split the string at
+	 * Splits a string
+	 * @param src String to split
+	 * @param len Length to split the string at
 	 * @return String[] Each key is one line of the chat message
 	 */
 	public String[] split(String src, int len) {
