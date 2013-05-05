@@ -12,6 +12,11 @@ public class Vote {
 	
 	public void Execute(CommandSender sender, String command, String[] args)
 	{
+		if (!(sender instanceof Player)) {
+			sender.sendMessage(plugin.msg.NOT_ENAUGH_PERMISSIONS); }
+		if (
+		
+		
 		if(sender instanceof Player)
 			if(args.length > 0)
 		plugin.worldVotes.set(Integer.parseInt(args[0]) - 1, plugin.worldVotes.get(Integer.parseInt(args[0]) - 1) + 1);

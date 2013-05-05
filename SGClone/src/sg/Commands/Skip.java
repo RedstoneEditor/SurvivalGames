@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 import sg.main.SurvivalGames;
 
 public class Skip {
-
 	private SurvivalGames plugin;
 	public Skip(SurvivalGames instance) { this.plugin = instance; }
 	

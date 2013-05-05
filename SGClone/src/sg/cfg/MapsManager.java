@@ -1,21 +1,15 @@
 package sg.cfg;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import sg.main.SurvivalGames;
+import sg.objects.Map;
+
+import java.io.*;
+import java.util.*;
 
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.WorldCreator;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.file.YamlConfiguration;
-
-import sg.main.SurvivalGames;
-import sg.objects.Map;
-import sg.objects.Spawn;
 
 public class MapsManager {
 	private SurvivalGames plugin;
@@ -40,22 +34,27 @@ public class MapsManager {
 	private void loadMap(File file) {
 		String name = file.getName();
 		
+		plugin.logger.log("Loading " + name + "...");
+		
 		Map map = new Map(name);
+		World world = plugin.loadWorld(name);
 		
 		try { cfg = YamlConfiguration.loadConfiguration(file); }
 		catch (Exception ex) { plugin.logger.log(ex); }
 		
 		for (int i = 1; i <= 24; i++) {
 			List<Double> coords = cfg.getDoubleList("map.spawns.spawn" + i);
-			Spawn spawn = new Spawn(coords.get(0), coords.get(1), coords.get(2));
+			Location spawn = new Location(world, coords.get(0), coords.get(1), coords.get(2));
 			map.spawns.add(spawn);
 		}
 		
 		for (int i = 1; i <= cfg.getInt("map.chests.count"); i++) {
-			
+			List<Integer> coords = cfg.getIntegerList("map.chests.chest" + i);
+			Block chest = world.getBlockAt(coords.get(0), coords.get(1), coords.get(2));
+			map.chests.put(chest, cfg.getInt("map.chests.chest" + i + ".level"));
 		}
 		
-		
+		plugin.unLoadWorld(name);
 	}	
 	
 	
@@ -66,6 +65,7 @@ public class MapsManager {
 		if(!mapsDir.exists()) { mapsDir.mkdirs(); }
 	}
 	
+	@SuppressWarnings("unused")
 	private void Export(String inputFile, File dest) {
 		plugin.logger.log("Exporting " + inputFile + "!");
 		

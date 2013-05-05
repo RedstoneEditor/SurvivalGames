@@ -2,10 +2,13 @@ package sg.objects;
 
 import java.util.*;
 
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+
 public class Map {
 	public String name;	
-	public Set<Spawn> spawns = new HashSet<Spawn>();
-	public Set<Chest> chests = new HashSet<Chest>();
+	public Set<Location> spawns = new HashSet<Location>();
+	public java.util.Map<Block, Integer> chests = new HashMap<Block, Integer>();
 	
 	public Map(String name) {
 		this.name = name;

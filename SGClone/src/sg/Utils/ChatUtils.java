@@ -11,9 +11,8 @@ public class ChatUtils {
 	private SurvivalGames plugin;
 	public ChatUtils(SurvivalGames instance) { this.plugin = instance; }
 
-	public String Colourize(boolean chat, String message) {
-		if (chat == true) {
-			message = message
+	public String Colourize(String message) {
+			return message
 					.replaceAll("&0", ChatColor.BLACK + "")
 					.replaceAll("&1", ChatColor.DARK_BLUE + "")
 					.replaceAll("&2", ChatColor.DARK_GREEN + "")
@@ -36,10 +35,6 @@ public class ChatUtils {
 					.replaceAll("&n", ChatColor.UNDERLINE + "")
 					.replaceAll("&o", ChatColor.ITALIC + "")
 					.replaceAll("&r", ChatColor.RESET + "");
-		} else {
-			message = message.replaceAll("&([a-z0-9])", "\u00A7$1");
-		}
-		return message;
 	}
 
 	public String Decolourize(String message) {

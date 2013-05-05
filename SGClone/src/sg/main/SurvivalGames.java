@@ -1,6 +1,12 @@
 package sg.main;
 
-import java.util.ArrayList;
+import sg.Commands.*;
+import sg.Listeners.*;
+import sg.Utils.*;
+import sg.cfg.*;
+import sg.objects.*;
+
+import java.util.*;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -10,78 +16,116 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import sg.Commands.GhostFix;
-import sg.Commands.Help;
-import sg.Commands.Skip;
-import sg.Commands.Vote;
-import sg.Listeners.CommandListener;
-import sg.Listeners.PlayerListener;
-import sg.Listeners.ServerListener;
-import sg.Utils.ChatUtils;
-import sg.Utils.Logger;
-import sg.Utils.VoteChat;
-import sg.cfg.ConfigManager;
-import sg.cfg.MapsManager;
-import sg.cfg.PlayerManager;
-import sg.objects.GameState;
-import sg.objects.Map;
-
 public class SurvivalGames extends JavaPlugin {
-	public ChatUtils chatUtils;
+	//SG.CFG
 	public ConfigManager cfgManager;
-	public Logger logger;
-	public PlayerListener playerListener;
-	public PlayerManager playerManager;
-	public PluginManager pluginManager;
-	public ServerListener serverListener;
 	public MapsManager mapManager;
-	public ArrayList<String> selectedWorlds;
-	public ArrayList<Integer> worldVotes;
-	public int skipVotes;
-	public String voteWorld;
-	public VoteChat voteChat;
-
-	// Commands
-	public CommandExecutor cmdExecutor;
-	public Help cmdHelp;
+	public PlayerManager playerManager;
+	
+	//SG.COMMANDS
 	public GhostFix cmdGF;
+	public Help cmdHelp;
+	public Skip cmdSkip;
+	public Vote cmdVote;
+	
+	//SG.LISTENERS
+	public CommandExecutor cmdExecutor;
+	public PlayerListener playerListener;
+	public ServerListener serverListener;
+	
+	//SG.UTILS	
+	public ChatUtils chatUtils;
+	public Logger logger;
+	public Messages msg;
+	public PluginManager pluginManager;
 
-	// World
+	//VARIABLES
+	public java.util.Map<String, World> worlds = new HashMap<String, World>();
+	
 	World world;
-	WorldCreator generator;
+	WorldCreator generator;	
 
 	public boolean canStart;
-	public int lobbyTime;
-	public int pregameTime;
-	public int gameTime;
-	public int deathmatchTime;
-
 	public GameState gameState = GameState.LOBBY;
-	public String currentWorld;
-	public Vote cmdVote;
-	public Skip cmdSkip;
 
 	@Override
-	public void onEnable() {
-		selectedWorlds = new ArrayList<String>();
-		worldVotes = new ArrayList<Integer>();
+	public void onEnable() {		
 		initializeClasses();
 		initializeCommandPerformers();
 		registerHooks();
 		registerCommandExecutor();
+		
+		logger.log("SurvivalGames Plugin Enabled!");
 
 		cfgManager.Check();
 		cfgManager.load();
+		mapManager.Check();
 		mapManager.load();
-		chooseVoteMaps();
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, voteChat, 0L, 200L);
-
 	}
 	
 	@Override
 	public void onDisable() {
+		logger.log("SurvivalGames Plugin Disabled!");
+	}
+	
+	private void initializeClasses() {
+		//SG.CFG
+		this.cfgManager = new ConfigManager(this);
+		this.mapManager = new MapsManager(this);
+		this.playerManager = new PlayerManager(this);
+		
+		//SG.LISTENERS
+		this.playerListener = new PlayerListener(this);
+		this.serverListener = new ServerListener(this);
+		
+		//SG.UTILS	
+		this.chatUtils = new ChatUtils(this);
+		this.logger = new Logger(this);
+		this.msg = new Messages(this);
+	}
+	
+	private void initializeCommandPerformers() {
+		this.cmdHelp = new Help(this);
+		this.cmdVote = new Vote(this);
+		this.cmdGF = new GhostFix(this);
+		this.cmdSkip = new Skip(this);		
+	}
+	
+	private void registerHooks() {
+		pluginManager.registerEvents(playerListener, this);
+		pluginManager.registerEvents(serverListener, this);
+	}
+	
+	private void registerCommandExecutor() {
+		this.cmdExecutor = new CommandListener(this);
+
+		getCommand("help").setExecutor(cmdExecutor);
+		getCommand("vote").setExecutor(cmdExecutor);
+		getCommand("skip").setExecutor(cmdExecutor);
+		getCommand("ghostfix").setExecutor(cmdExecutor);
+	}
+	
+	public World loadWorld(String name) {
+		this.generator = new WorldCreator(name);
+		World world = this.getServer().createWorld(generator);
+		worlds.put(name, world);
+		return world;
 	}
 
+	public void unLoadWorld(String name) {
+		this.getServer().unloadWorld(name, false);
+		worlds.remove(name);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	//TODO EDIT
+	
 	//TODO Choose maps to vote on NOT TESTED
 	@SuppressWarnings("rawtypes")
 	public void chooseVoteMaps() {
@@ -97,58 +141,8 @@ public class SurvivalGames extends JavaPlugin {
 		}
 	}
 
-	/** Initializes all the classes */
-	private void initializeClasses() {
-		this.chatUtils = new ChatUtils(this);
-		this.cfgManager = new ConfigManager(this);
-		this.logger = new Logger(this);
-		this.playerListener = new PlayerListener(this);
-		this.playerManager = new PlayerManager(this);
-		this.pluginManager = getServer().getPluginManager();
-		this.serverListener = new ServerListener(this);
-		this.mapManager = new MapsManager(this);
-		this.lobbyTime = cfgManager.lobbyTime;
-		this.pregameTime = cfgManager.pregameTime;
-		this.gameTime = cfgManager.gameTime;
-		this.deathmatchTime = cfgManager.deathmatchTime;
-		this.voteChat = new VoteChat(this);
-	}
-
-	/** Initializes the command's classes */
-	private void initializeCommandPerformers() {
-		this.cmdHelp = new Help(this);
-		this.cmdVote = new Vote(this);
-		this.cmdGF = new GhostFix(this);
-		this.cmdSkip = new Skip(this);
-		
-	}
-
-	/** Register Event Listeners */
-	private void registerHooks() {
-		pluginManager.registerEvents(playerListener, this);
-		pluginManager.registerEvents(serverListener, this);
-	}
-
-	/** Register the Command Executor */
-	private void registerCommandExecutor() {
-		this.cmdExecutor = new CommandListener(this);
-
-		getCommand("help").setExecutor(cmdExecutor);
-		getCommand("vote").setExecutor(cmdExecutor);
-		getCommand("skip").setExecutor(cmdExecutor);
-		getCommand("ghostfix").setExecutor(cmdExecutor);
-	}
  
-	public void loadWorld(String world) {
-		this.generator = new WorldCreator(world);
-		this.world = this.getServer().createWorld(generator);
-		
-	}
-
-	public void unLoadWorld(String world) {
-		this.getServer().unloadWorld(world, false);
-		this.currentWorld = world;
-	}
+	
 
 	public void kickAllPlayers(String string) {
 		for (Player p : Bukkit.getOnlinePlayers()) {

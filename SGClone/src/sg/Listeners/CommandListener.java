@@ -18,7 +18,7 @@ public class CommandListener implements CommandExecutor {
 		case "vote": plugin.cmdVote.Execute(sender, command, args); return true;
 		case "skip": plugin.cmdSkip.Execute(sender, command, args); return true;
 		case "ghostfix": plugin.cmdGF.Execute(sender, command, args); return true;
-		default: return false;
+		default: return true;
 		}
 	}
 }
