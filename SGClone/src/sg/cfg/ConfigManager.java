@@ -1,12 +1,18 @@
 package sg.cfg;
 
 import sg.main.SurvivalGames;
+import sg.objects.GameState;
+import sg.objects.Rank;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -17,38 +23,16 @@ public class ConfigManager {
 	public YamlConfiguration cfg = new YamlConfiguration();
 	File cfgFile = new File("plugins" + File.separator + "SurvivalGames" + File.separator + "config.yml");
 
-	//Chat Formattation
-	public String chatFormat;
-	public String userPrefix;
-	public String vipPrefix;
-	public String staffPrefix;
-
-	//Timers
-	public int lobbyTime;
-	public int pregameTime;
-	public int gameTime;
-	public int deathmatchTime;
-	
-	//Motds
-	public String lobbyMotd;
-	public String pregameMotd;
-	public String ingameMotd;
-	public String deathmatchMotd;
-	public String endgameMotd;
-
-	//Messages
-	public String playerDeathMessage;
-	public String playerJoinMessage;
-	public String playerQuitMessage;
-	public String killerMessage;
-	public String victimMessage;
-
-	//General Variables
+	public String format;
 	public int minPlayers;
 	
-	//Other
-	public List<String> blockBreakWhitelist;
-
+	public Map<Rank, String> prefixes = new HashMap<Rank, String>();
+	public Map<GameState, Integer> times = new HashMap<GameState, Integer>();
+	public Map<GameState, String> motds = new HashMap<GameState, String>();
+	public Map<String, String> messages = new HashMap<String, String>();
+	
+	public Set<Integer> blockWhitelist = new HashSet<Integer>();
+	
 	/** Loads data from config.yml */
 	public void load() {
 		try { cfg = YamlConfiguration.loadConfiguration(cfgFile); }
@@ -56,31 +40,34 @@ public class ConfigManager {
 		
 		plugin.logger.log("Loading values from config.yml...");
 
-		this.chatFormat = cfg.getString("chat.format");
-		this.userPrefix = cfg.getString("chat.prefix.user");
-		this.vipPrefix = cfg.getString("chat.prefix.vip");
-		this.staffPrefix = cfg.getString("chat.prefix.staff");
-
-		this.lobbyTime = cfg.getInt("timers.lobby");
-		this.pregameTime = cfg.getInt("timers.pregame");
-		this.gameTime = cfg.getInt("timers.ingame");
-		this.deathmatchTime = cfg.getInt("timers.deathmatch");
-		
-		this.lobbyMotd = cfg.getString("motd.lobby");
-		this.pregameMotd = cfg.getString("motd.pregame");
-		this.ingameMotd = cfg.getString("motd.ingame");
-		this.deathmatchMotd = cfg.getString("motd.deathmatch");
-		this.endgameMotd = cfg.getString("motd.endgame");
-
-		this.playerDeathMessage = cfg.getString("messages.player-death");
-		this.playerJoinMessage = cfg.getString("messages.player-join");
-		this.playerQuitMessage = cfg.getString("messages.player-quit");
-		this.killerMessage = cfg.getString("messages.killer");
-		this.victimMessage = cfg.getString("messages.victim");
-
+		this.format = cfg.getString("chat.format");
 		this.minPlayers = cfg.getInt("server.min-players");
 		
-		this.blockBreakWhitelist = cfg.getStringList("block-break-whitelist");
+		prefixes.put(Rank.USER, cfg.getString("chat.prefix.user"));
+		prefixes.put(Rank.VIP, cfg.getString("chat.prefix.vip"));
+		prefixes.put(Rank.MOD, cfg.getString("chat.prefix.mod"));
+		prefixes.put(Rank.ADMIN, cfg.getString("chat.prefix.admin"));
+		
+		times.put(GameState.LOBBY, cfg.getInt("times.lobby"));
+		times.put(GameState.PREGAME, cfg.getInt("times.pregame"));
+		times.put(GameState.INGAME, cfg.getInt("times.ingame"));
+		times.put(GameState.DEATHMATCH, cfg.getInt("times.deathmatch"));
+		times.put(GameState.ENDGAME, 10);
+		
+		motds.put(GameState.LOBBY, cfg.getString("motd.lobby"));
+		motds.put(GameState.PREGAME, cfg.getString("motd.pregame"));
+		motds.put(GameState.INGAME, cfg.getString("motd.ingame"));
+		motds.put(GameState.DEATHMATCH, cfg.getString("motd.deathmatch"));
+		motds.put(GameState.ENDGAME, cfg.getString("motd.endgame"));
+
+		messages.put("join", cfg.getString("messages.player-join"));
+		messages.put("quit", cfg.getString("messages.player-quit"));
+		messages.put("death", cfg.getString("messages.player-death"));
+		messages.put("killer", cfg.getString("messages.killer"));
+		messages.put("victim", cfg.getString("messages.victim"));
+		
+		List<Integer> bWhitelist = cfg.getIntegerList("block-break-place-whitelist");
+		for (int i : bWhitelist) { blockWhitelist.add(i); }
 		
 		plugin.logger.log("Config values loaded!");
 	}
@@ -92,14 +79,11 @@ public class ConfigManager {
 		File baseDir = new File("plugins" + File.separator + "SurvivalGames");
 		File config = new File("plugins" + File.separator + "SurvivalGames" + File.separator + "config.yml");
 		File players = new File("plugins" + File.separator + "SurvivalGames" + File.separator + "players.yml");
-		File maps = new File("plugins" + File.separator + "SurvivalGames" + File.separator + "maps.yml");
-		if(!baseDir.exists()) { baseDir.mkdirs(); }
 		
-		if((config.exists()) && (players.exists())) { return; }
+		if(!baseDir.exists()) { baseDir.mkdirs(); }
 		
 		if (!config.exists()) {	Export("config.yml", config); }
 		if (!players.exists()) { Export("players.yml", players); }
-		if(!maps.exists()){ Export("maps.yml", maps); }
 	}
 	
 	private void Export(String inputFile, File dest) {

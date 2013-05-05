@@ -1,9 +1,16 @@
 package sg.cfg;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.WorldCreator;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import sg.main.SurvivalGames;
@@ -17,51 +24,67 @@ public class MapsManager {
 	YamlConfiguration cfg = new YamlConfiguration();
 	File cfgFile = new File("plugins" + File.separator + "SurvivalGames" + File.separator + "maps.yml");
 	
-	private String mname(int index) { return "maps.map" + index + ".name"; }
-	private String mpath(int index) { return "maps.map" + index + ".world"; }
+	java.util.Map<String, Map> maps = new HashMap<String, Map>();
 	
-	public int count;
-	public ArrayList<Map> maps = new ArrayList<Map>();
-	
-	/** Loads all the map configuration */
 	public void load() {
-		try { cfg = YamlConfiguration.loadConfiguration(cfgFile); }
-		catch (Exception ex) { plugin.logger.log(ex); }
+		File mapsDir = new File("plugins" + File.separator + "SurvivalGames" + File.separator + "maps");
+		File[] fMaps = mapsDir.listFiles();
 		
-		plugin.logger.log("Loading maps settings...");
-		
-		this.count = cfg.getInt("maps.count");	
-		
-		for (int i = 0; i < count; i++) {
-			plugin.logger.log("Loading map: " + cfg.getString(mname(i)));
-			
-			Map map = new Map(cfg.getString(mname(i)), plugin.getServer().getWorldContainer().getAbsolutePath() + cfg.getString(mpath(i).replace(".", "")), i);
-			try{
-			maps.add(i, map);
-			System.out.println(maps);
-			} catch(NullPointerException e){
-				System.out.println(e.getMessage());
-				System.out.println("There was an error creating adding map object to map list!");
+		for (File fMap : fMaps) {
+			if (fMap.isFile()) {
+				loadMap(fMap);
 			}
 		}
-		
-		plugin.logger.log("All maps loaded!");
-		System.out.println(cfg.getString("maps.map0.world"));
 	}
 	
-	/** Loads the spawnpoints for each map */
-	public void loadSpawnPoints() {
-		for (Map map : maps) {
-			plugin.logger.log("Loading spawnpoints for map " + map.name + "!");
+	private void loadMap(File file) {
+		String name = file.getName();
+		
+		Map map = new Map(name);
+		
+		try { cfg = YamlConfiguration.loadConfiguration(file); }
+		catch (Exception ex) { plugin.logger.log(ex); }
+		
+		for (int i = 1; i <= 24; i++) {
+			List<Double> coords = cfg.getDoubleList("map.spawns.spawn" + i);
+			Spawn spawn = new Spawn(coords.get(0), coords.get(1), coords.get(2));
+			map.spawns.add(spawn);
+		}
+		
+		for (int i = 1; i <= cfg.getInt("map.chests.count"); i++) {
 			
-			Spawn[] spawns = new Spawn[24];
+		}
+		
+		
+	}	
+	
+	
+	public void Check() {
+		plugin.logger.log("Checking files!");
+		
+		File mapsDir = new File("plugins" + File.separator + "SurvivalGames" + File.separator + "maps");
+		if(!mapsDir.exists()) { mapsDir.mkdirs(); }
+	}
+	
+	private void Export(String inputFile, File dest) {
+		plugin.logger.log("Exporting " + inputFile + "!");
+		
+		try {
+			dest.createNewFile();
 			
-			for (int i = 0; i < 24; i++) {
-				List<Double> coords = cfg.getDoubleList("maps.map" + map.index + ".spawn-points.spawn" + (i+1));
-				spawns[i] = new Spawn(coords.get(0), coords.get(1), coords.get(2));
+			InputStream input = plugin.getResource(inputFile);
+			@SuppressWarnings("resource")
+			OutputStream output = new FileOutputStream(dest);
+
+			byte[] buffer = new byte[1024];
+			int length;
+
+			while ((length = input.read(buffer)) > 0) {
+				output.write(buffer, 0, length);
 			}
-			
-			map.spawns = spawns;
+		} catch (Exception ex) {
+			plugin.logger.log("Error while exporting " + inputFile + "!");
+			plugin.logger.log(ex);
 		}
 	}
 }

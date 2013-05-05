@@ -6,7 +6,8 @@ chat:
   prefix:
     user: '&2'
     vip: '&1'
-    staff: '&4'
+    mod: '&a'
+    admin: '&4'
 
 messages:
   player-death:  '%prefix%username &ehas been &ckilled!' 

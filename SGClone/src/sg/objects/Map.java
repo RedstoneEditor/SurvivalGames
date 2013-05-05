@@ -1,14 +1,13 @@
 package sg.objects;
 
+import java.util.*;
+
 public class Map {
-	public String name;
-	public String world;
-	public int index;
-	public Spawn[] spawns;
+	public String name;	
+	public Set<Spawn> spawns = new HashSet<Spawn>();
+	public Set<Chest> chests = new HashSet<Chest>();
 	
-	public Map(String name, String world, int index) {
+	public Map(String name) {
 		this.name = name;
-		this.world = world;
-		this.index = index;
 	}
 }

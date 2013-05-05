@@ -142,6 +142,7 @@ public class SurvivalGames extends JavaPlugin {
 	public void loadWorld(String world) {
 		this.generator = new WorldCreator(world);
 		this.world = this.getServer().createWorld(generator);
+		
 	}
 
 	public void unLoadWorld(String world) {
