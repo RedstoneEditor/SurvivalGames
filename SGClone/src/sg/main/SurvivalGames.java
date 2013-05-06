@@ -42,6 +42,13 @@ public class SurvivalGames extends JavaPlugin {
 	//VARIABLES
 	public java.util.Map<String, World> worlds = new HashMap<String, World>();
 	
+	//Index 1 based
+	public java.util.Map<Integer, sg.objects.Map> maps = new HashMap<Integer, sg.objects.Map>();
+	public java.util.Map<sg.objects.Map, Integer> votes = new HashMap<sg.objects.Map, Integer>();
+	public java.util.Map<Player, sg.objects.Map> player_votes = new HashMap<Player, sg.objects.Map>();
+	
+	public int skips = 0;
+	
 	World world;
 	WorldCreator generator;	
 

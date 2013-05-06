@@ -1,6 +1,5 @@
 package sg.Commands;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -12,10 +11,19 @@ public class Skip {
 	
 	public void Execute(CommandSender sender, String command, String[] args)
 	{
-		if(sender instanceof Player)
-			plugin.skipVotes++;
-		else
-			sender.sendMessage(ChatColor.RED + "This command is only available to players!");
+		if (!(sender instanceof Player)) {
+			sender.sendMessage(plugin.msg.MUST_BE_PLAYER); }
+		if (args.length > 0) {
+			sender.sendMessage(plugin.msg.WRONG_SYNTAX); }
+		
+		plugin.skips ++;
+		
+		if (plugin.skips >= 8) {
+			
+		}
 	}
 
+	public void proceedWithSkip() {
+		
+	}
 }
