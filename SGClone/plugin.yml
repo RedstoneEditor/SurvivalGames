@@ -2,7 +2,7 @@ name: SurvivalGames
 version: 1.1.1
 main: sg.main.SurvivalGames
 description: MCSG's plugin completely rebuilt!
-authors: [Renaud, AssassinsMod, Rage_Master14]
+authors: [Renaud, AssassinsMod, Rage_Master14, Xquiset]
 website: http://www.redstoneeditorsg.tk/
 database: false
 prefix: SG
